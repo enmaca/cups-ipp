@@ -1,5 +1,4 @@
 <?php
-
 namespace Smalot\Cups\Transport;
 
 use GuzzleHttp\Psr7\Uri;
@@ -12,6 +11,7 @@ use Http\Client\HttpClient;
 use Http\Client\Socket\Client as SocketHttpClient;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Smalot\Cups\CupsException;
 
 /**
@@ -29,21 +29,25 @@ class Client implements HttpClient
     const AUTHTYPE_DIGEST = 'digest';
 
     /**
+     *
      * @var HttpClient
      */
     protected $httpClient;
 
     /**
+     *
      * @var string
      */
     protected $authType;
 
     /**
+     *
      * @var string
      */
     protected $username;
 
     /**
+     *
      * @var string
      */
     protected $password;
@@ -57,11 +61,11 @@ class Client implements HttpClient
      */
     public function __construct($username = null, $password = null, $socketClientOptions = [])
     {
-        if (!is_null($username)) {
+        if (! is_null($username)) {
             $this->username = $username;
         }
 
-        if (!is_null($password)) {
+        if (! is_null($password)) {
             $this->password = $password;
         }
 
@@ -71,23 +75,19 @@ class Client implements HttpClient
 
         $messageFactory = new GuzzleMessageFactory();
         $socketClient = new SocketHttpClient($messageFactory, $socketClientOptions);
-        $host = preg_match(
-          '/unix:\/\//',
-          $socketClientOptions['remote_socket']
-        ) ? 'http://localhost' : $socketClientOptions['remote_socket'];
-        $this->httpClient = new PluginClient(
-          $socketClient, [
+        $host = preg_match('/unix:\/\//', $socketClientOptions['remote_socket']) ? 'http://localhost' : $socketClientOptions['remote_socket'];
+        $this->httpClient = new PluginClient($socketClient, [
             new ErrorPlugin(),
             new ContentLengthPlugin(),
             new DecoderPlugin(),
-            new AddHostPlugin(new Uri($host)),
-          ]
-        );
+            new AddHostPlugin(new Uri($host))
+        ]);
 
         $this->authType = self::AUTHTYPE_BASIC;
     }
 
     /**
+     *
      * @param string $username
      * @param string $password
      *
@@ -102,6 +102,7 @@ class Client implements HttpClient
     }
 
     /**
+     *
      * @param string $authType
      *
      * @return $this
@@ -116,13 +117,13 @@ class Client implements HttpClient
     /**
      * (@inheritdoc}
      */
-    public function sendRequest(RequestInterface $request)
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         if ($this->username || $this->password) {
             switch ($this->authType) {
                 case self::AUTHTYPE_BASIC:
-                    $pass = base64_encode($this->username.':'.$this->password);
-                    $authentication = 'Basic '.$pass;
+                    $pass = base64_encode($this->username . ':' . $this->password);
+                    $authentication = 'Basic ' . $pass;
                     break;
 
                 case self::AUTHTYPE_DIGEST:
