@@ -9,3 +9,6 @@
 /samples/
 /dump*
 composer.lock
+/.settings/
+.buildpath
+.project
