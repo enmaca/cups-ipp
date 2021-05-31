@@ -1,5 +1,4 @@
 <?php
-
 namespace Smalot\Cups\Model;
 
 /**
@@ -14,16 +13,19 @@ class Printer implements PrinterInterface
     use Traits\UriAware;
 
     /**
+     *
      * @var string
      */
     protected $name;
 
     /**
+     *
      * @var string
      */
     protected $status;
 
     /**
+     *
      * @return string
      */
     public function getName()
@@ -32,6 +34,7 @@ class Printer implements PrinterInterface
     }
 
     /**
+     *
      * @param string $name
      *
      * @return Printer
@@ -44,6 +47,7 @@ class Printer implements PrinterInterface
     }
 
     /**
+     *
      * @return string
      */
     public function getStatus()
@@ -52,6 +56,7 @@ class Printer implements PrinterInterface
     }
 
     /**
+     *
      * @param string $status
      *
      * @return Printer
